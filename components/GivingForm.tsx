@@ -1,5 +1,8 @@
 "use client";
 
+"use client";
+
+import { useMemo, useState } from "react";
 import { Camera, Aperture, Lightbulb, Check, Loader2 } from "lucide-react";
 import { CATEGORY_KEYS, EQUIPMENT, type CategoryKey } from "@/lib/equipment";
 
