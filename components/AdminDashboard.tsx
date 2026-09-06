@@ -233,6 +233,29 @@ function SummaryCard({
   value: number;
   accent: string;
 }) {
+  const handleDelete = async (id: string) => {
+  if (!confirm("Are you sure you want to delete this contribution?")) return;
+
+  try {
+    const res = await fetch("/api/admin/delete", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert("Entry deleted successfully!");
+      window.location.reload();
+    } else {
+      alert("Failed to delete: " + data.error);
+    }
+  } catch (err) {
+    alert("An error occurred while deleting.");
+  }
+};
+  
   return (
     <div className="rounded-xl border border-ink/10 bg-white p-3">
       <div className={`mb-2 h-1 w-6 rounded-full ${accent}`} />
