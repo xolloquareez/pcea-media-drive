@@ -30,16 +30,15 @@ export default function AdminDashboard({
   initialContributions: Contribution[];
 }) {
   const router = useRouter();
-   const [contributions, setContributions] = useState(initialContributions);
+  const [contributions, setContributions] = useState(initialContributions);
   const [updating, setUpdating] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const categoryTotals = useMemo(() => {
-        const totals: Record<CategoryKey, number> = {
+    const totals: Record<CategoryKey, number> = {
       CAMERA: 0,
       CAMERA_LENS: 0,
       LIGHTING: 0,
-    };
     };
     for (const c of contributions) {
       for (const item of c.items) {
@@ -75,28 +74,6 @@ export default function AdminDashboard({
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this contribution?")) return;
-
-    try {
-      const res = await fetch("/api/admin/delete", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        setContributions((prev) => prev.filter((c) => c.id !== id));
-        alert("Entry deleted successfully!");
-      } else {
-        alert("Failed to delete: " + data.error);
-      }
-    } catch (err) {
-      alert("An error occurred while deleting.");
-    }
-  }
   async function deleteContribution(id: string, donorName: string) {
     const confirmed = window.confirm(
       `Delete ${donorName}'s record? This cannot be undone.`
@@ -114,6 +91,7 @@ export default function AdminDashboard({
       setDeletingId(null);
     }
   }
+
   function exportCsv() {
     const header = [
       "Name",
@@ -199,11 +177,8 @@ export default function AdminDashboard({
                 <th className="px-4 py-3 font-medium">Breakdown</th>
                 <th className="px-4 py-3 font-medium">Total</th>
                 <th className="px-4 py-3 font-medium">Status</th>
-                               <th className="px-4 py-3 font-medium">Date</th>
+                <th className="px-4 py-3 font-medium">Date</th>
                 <th className="px-4 py-3 font-medium">Actions</th>
-              </tr>
-            </thead>
-                <th className="px-4 py-3 font-medium text-right">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -251,12 +226,15 @@ export default function AdminDashboard({
                       year: "numeric",
                     })}
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3">
                     <button
-                      onClick={() => handleDelete(c.id)}
-                      className="inline-flex items-center gap-1 rounded bg-red-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-red-700 transition-colors"
+                      onClick={() => deleteContribution(c.id, c.donorName)}
+                      disabled={deletingId === c.id}
+                      aria-label={`Delete ${c.donorName}'s record`}
+                      className="flex items-center gap-1 rounded-md border border-maroon/30 px-2 py-1 text-xs font-semibold text-maroon transition-colors hover:bg-maroon/10 disabled:opacity-50"
                     >
-                      <Trash2 size={13} /> Delete
+                      <Trash2 size={13} />
+                      {deletingId === c.id ? "…" : "Delete"}
                     </button>
                   </td>
                 </tr>
