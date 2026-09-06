@@ -1,0 +1,57 @@
+// PCEA Embakasi Media Drive & Pledge Portal — database schema
+// Run `npx prisma migrate dev --name init` after setting DATABASE_URL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ContributionType {
+  GIVE
+  PLEDGE
+}
+
+enum ContributionStatus {
+  PENDING     // Give Now: awaiting manual reconciliation against M-Pesa statement
+  CONFIRMED   // Give Now: verified received by an admin
+  FULFILLED   // Pledge: donor has since paid
+  OUTSTANDING // Pledge: not yet paid
+}
+
+enum EquipmentCategory {
+  CAMERA
+  MICROPHONE
+  LIGHTING
+}
+
+model Contribution {
+  id          String             @id @default(cuid())
+  donorName   String
+  donorPhone  String
+  type        ContributionType
+  status      ContributionStatus @default(PENDING)
+  totalAmount Int // KES, stored as whole shillings
+  note        String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  items       ContributionItem[]
+
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model ContributionItem {
+  id             String            @id @default(cuid())
+  contributionId String
+  contribution   Contribution      @relation(fields: [contributionId], references: [id], onDelete: Cascade)
+  category       EquipmentCategory
+  amount         Int // KES
+
+  @@index([contributionId])
+  @@index([category])
+}

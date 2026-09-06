@@ -1,0 +1,10 @@
+import { PrismaClient } from "@prisma/client";
+
+// Prevents exhausting DB connections in serverless/dev hot-reload environments.
+const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
+
+export const prisma = globalForPrisma.prisma ?? new PrismaClient();
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+}
