@@ -1,6 +1,6 @@
-export type CategoryKey = "CAMERA" | "MICROPHONE" | "LIGHTING";
+export type CategoryKey = "CAMERA" | "CAMERA_LENS" | "LIGHTING";
 
-export const EQUIPMENT: Record<
+export const EQUIPMENT: Record
   CategoryKey,
   { label: string; blurb: string; presets: number[] }
 > = {
@@ -9,9 +9,9 @@ export const EQUIPMENT: Record<
     blurb: "Broadcast-quality cameras for the sanctuary and livestream.",
     presets: [500, 1000, 2500, 5000],
   },
-  MICROPHONE: {
-    label: "Microphone",
-    blurb: "Wireless mics for the pulpit, choir, and praise team.",
+  CAMERA_LENS: {
+    label: "Camera Lens",
+    blurb: "Interchangeable lenses for sharper, more dynamic shots.",
     presets: [500, 1000, 2500, 5000],
   },
   LIGHTING: {
