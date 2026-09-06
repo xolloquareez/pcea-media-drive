@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LogOut, Download } from "lucide-react";
+import { LogOut, Download, Trash2 } from "lucide-react";
 import { EQUIPMENT, type CategoryKey } from "@/lib/equipment";
 
 type Item = { id: string; category: CategoryKey; amount: number };
@@ -70,6 +70,29 @@ export default function AdminDashboard({
       alert("Could not update status. Please try again.");
     } finally {
       setUpdating(null);
+    }
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Are you sure you want to delete this contribution?")) return;
+
+    try {
+      const res = await fetch("/api/admin/delete", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setContributions((prev) => prev.filter((c) => c.id !== id));
+        alert("Entry deleted successfully!");
+      } else {
+        alert("Failed to delete: " + data.error);
+      }
+    } catch (err) {
+      alert("An error occurred while deleting.");
     }
   }
 
@@ -159,6 +182,7 @@ export default function AdminDashboard({
                 <th className="px-4 py-3 font-medium">Total</th>
                 <th className="px-4 py-3 font-medium">Status</th>
                 <th className="px-4 py-3 font-medium">Date</th>
+                <th className="px-4 py-3 font-medium text-right">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -206,11 +230,19 @@ export default function AdminDashboard({
                       year: "numeric",
                     })}
                   </td>
+                  <td className="px-4 py-3 text-right">
+                    <button
+                      onClick={() => handleDelete(c.id)}
+                      className="inline-flex items-center gap-1 rounded bg-red-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-red-700 transition-colors"
+                    >
+                      <Trash2 size={13} /> Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
               {contributions.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-sm text-ink/50">
+                  <td colSpan={7} className="px-4 py-10 text-center text-sm text-ink/50">
                     No contributions yet. Once the QR code is shared, records will
                     appear here.
                   </td>
@@ -233,29 +265,6 @@ function SummaryCard({
   value: number;
   accent: string;
 }) {
-  const handleDelete = async (id: string) => {
-  if (!confirm("Are you sure you want to delete this contribution?")) return;
-
-  try {
-    const res = await fetch("/api/admin/delete", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      alert("Entry deleted successfully!");
-      window.location.reload();
-    } else {
-      alert("Failed to delete: " + data.error);
-    }
-  } catch (err) {
-    alert("An error occurred while deleting.");
-  }
-};
-  
   return (
     <div className="rounded-xl border border-ink/10 bg-white p-3">
       <div className={`mb-2 h-1 w-6 rounded-full ${accent}`} />
