@@ -1,12 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Camera, Mic, Lightbulb, Check, Loader2 } from "lucide-react";
+import { Camera, Aperture, Lightbulb, Check, Loader2 } from "lucide-react";
 import { CATEGORY_KEYS, EQUIPMENT, type CategoryKey } from "@/lib/equipment";
 
 const ICONS: Record<CategoryKey, React.ElementType> = {
   CAMERA: Camera,
-  CAMERA LENS: Mic,
+  CAMERA_LENS: Aperture,
   LIGHTING: Lightbulb,
 };
 
