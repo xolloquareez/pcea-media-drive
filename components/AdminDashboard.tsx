@@ -97,7 +97,23 @@ export default function AdminDashboard({
       alert("An error occurred while deleting.");
     }
   }
+  async function deleteContribution(id: string, donorName: string) {
+    const confirmed = window.confirm(
+      `Delete ${donorName}'s record? This cannot be undone.`
+    );
+    if (!confirmed) return;
 
+    setDeletingId(id);
+    try {
+      const res = await fetch(`/api/contributions/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete.");
+      setContributions((prev) => prev.filter((c) => c.id !== id));
+    } catch {
+      alert("Could not delete this record. Please try again.");
+    } finally {
+      setDeletingId(null);
+    }
+  }
   function exportCsv() {
     const header = [
       "Name",
@@ -183,7 +199,10 @@ export default function AdminDashboard({
                 <th className="px-4 py-3 font-medium">Breakdown</th>
                 <th className="px-4 py-3 font-medium">Total</th>
                 <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Date</th>
+                               <th className="px-4 py-3 font-medium">Date</th>
+                <th className="px-4 py-3 font-medium">Actions</th>
+              </tr>
+            </thead>
                 <th className="px-4 py-3 font-medium text-right">Action</th>
               </tr>
             </thead>
