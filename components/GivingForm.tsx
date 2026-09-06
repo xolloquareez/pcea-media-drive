@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import { useMemo, useState } from "react";
 import { Camera, Aperture, Lightbulb, Check, Loader2 } from "lucide-react";
 import { CATEGORY_KEYS, EQUIPMENT, type CategoryKey } from "@/lib/equipment";
@@ -13,6 +11,51 @@ const ICONS: Record<CategoryKey, React.ElementType> = {
 };
 
 type Selection = Partial<Record<CategoryKey, number>>;
+
+/**
+ * Shows /public/logo.png (your real church crest) once you've added it.
+ * Until then, falls back to an original monogram — no stock or borrowed
+ * artwork — so the header still looks finished out of the box.
+ */
+function LogoSlot() {
+  const [hasLogo, setHasLogo] = useState(true);
+
+  if (hasLogo) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src="/logo.png"
+        alt="P.C.E.A. Embakasi Church crest"
+        onError={() => setHasLogo(false)}
+        className="mx-auto mb-2 h-16 w-16 object-contain"
+      />
+    );
+  }
+
+  return (
+    <svg
+      viewBox="0 0 64 64"
+      className="mx-auto mb-2 h-14 w-14"
+      role="img"
+      aria-label="P.C.E.A. Embakasi Church monogram"
+    >
+      <circle cx="32" cy="32" r="31" fill="none" stroke="#0F3875" strokeWidth="2" />
+      <path
+        d="M32 12v40M18 20h28"
+        stroke="#8C2331"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      <path
+        d="M20 44c4-6 8-9 12-9s8 3 12 9"
+        fill="none"
+        stroke="#A87C2B"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
 
 const PAYBILL_NUMBER = process.env.NEXT_PUBLIC_PAYBILL_NUMBER || "000000";
 const PAYBILL_ACCOUNT = process.env.NEXT_PUBLIC_PAYBILL_ACCOUNT || "MEDIA FUND";
@@ -111,6 +154,7 @@ export default function GivingForm() {
     <div className="relative mx-auto w-full max-w-md">
       <div className="rounded-2xl bg-ivory p-6 shadow-card sm:p-8">
         <header className="mb-6 text-center">
+          <LogoSlot />
           <p className="font-serif text-lg font-semibold tracking-tight text-navy sm:text-xl">
             P.C.E.A. Embakasi Church
           </p>
