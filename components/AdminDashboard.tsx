@@ -30,8 +30,9 @@ export default function AdminDashboard({
   initialContributions: Contribution[];
 }) {
   const router = useRouter();
-  const [contributions, setContributions] = useState(initialContributions);
+   const [contributions, setContributions] = useState(initialContributions);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const categoryTotals = useMemo(() => {
     const totals: Record<CategoryKey, number> = {
