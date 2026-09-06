@@ -35,10 +35,11 @@ export default function AdminDashboard({
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const categoryTotals = useMemo(() => {
-    const totals: Record<CategoryKey, number> = {
+        const totals: Record<CategoryKey, number> = {
       CAMERA: 0,
-      MICROPHONE: 0,
+      CAMERA_LENS: 0,
       LIGHTING: 0,
+    };
     };
     for (const c of contributions) {
       for (const item of c.items) {
