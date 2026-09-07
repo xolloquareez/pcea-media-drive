@@ -25,3 +25,19 @@ export async function PATCH(
 
   return NextResponse.json({ contribution: updated });
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const token = req.cookies.get(ADMIN_COOKIE)?.value;
+  if (!isValidSessionToken(token)) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
+
+  // ContributionItem rows are removed automatically via onDelete: Cascade
+  // in the Prisma schema.
+  await prisma.contribution.delete({ where: { id: params.id } });
+
+  return NextResponse.json({ ok: true });
+}
